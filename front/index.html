@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Rutas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Buscador de Rutas</h1>
+
+  <div class="grid-container">
+    <div class="form">
+      <h2>Buscar Ruta</h2>
+      <label>Ciudad Origen:</label>
+      <select id="origen"></select>
+
+      <label>Ciudad Destino:</label>
+      <select id="destino"></select>
+      <button onclick="buscarRutas()">Buscar</button>
+
+      <div id="resultado"></div>
+      
+    </div>
+
+    <div class="form">
+      <h2>Agregar Ciudad</h2>
+      <input type="text" id="nuevaCiudad" placeholder="Nombre de la ciudad">
+      <button onclick="agregarCiudad()">Agregar Ciudad</button>
+    </div>
+
+    <div class="form">
+      <h2>Agregar Ruta</h2>
+      <label>Origen:</label>
+      <select id="rutaOrigen"></select>
+
+      <label>Destino:</label>
+      <select id="rutaDestino"></select>
+
+      <input type="number" id="rutaDistancia" placeholder="Distancia en km">
+
+      <label>Estado:</label>
+      <select id="rutaEstado">
+        <option value="activa">Activa</option>
+        <option value="inactiva">Inactiva</option>
+      </select>
+      <button onclick="agregarRuta()">Agregar Ruta</button>
+    </div>
+
+    <div class="form">
+      <h2>Administrar Ciudades</h2>
+      <select id="ciudadesList" onchange="mostrarNombreCiudad()"></select>
+      <input type="text" id="nombreCiudadActualizar" placeholder="Nombre de la ciudad">
+      <button onclick="actualizarCiudad()">Actualizar Ciudad</button>
+      <button onclick="eliminarCiudad()">Eliminar Ciudad</button>
+    </div>
+
+    <div class="form">
+      <h2>Administrar Rutas</h2>
+      <select id="rutasList" onchange="mostrarNombreRuta()"></select>
+
+      <label>Origen:</label>
+      <select id="origenIdSelect"></select>
+
+      <label>Destino:</label>
+      <select id="destinoIdSelect"></select>
+
+      <input type="number" id="rutaDistanciaActualizar" placeholder="Distancia">
+      <select id="rutaEstadoActualizar">
+        <option value="activa">Activa</option>
+        <option value="inactiva">Inactiva</option>
+      </select>
+
+      <button onclick="actualizarRuta()">Actualizar Ruta</button>
+      <button onclick="eliminarRuta()">Eliminar Ruta</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
