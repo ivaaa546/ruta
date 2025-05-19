@@ -122,3 +122,58 @@ exports.getRutasOptimas = (req, res) => {
       });
     });
   };
+
+  async function mostrarGrafico() {
+  const resRutas = await fetch('/api/rutas');
+  const rutas = await resRutas.json();
+
+  const resCiudades = await fetch('/api/ciudades');
+  const ciudades = await resCiudades.json();
+
+  const graphContainer = document.getElementById('graphContainer');
+  graphContainer.innerHTML = ''; // Limpiar contenido anterior
+
+  // Dibujar los nodos (ciudades)
+  const nodos = ciudades.map((ciudad, index) => {
+    const node = document.createElement('div');
+    node.classList.add('node');
+    node.textContent = ciudad.nombre;
+    
+    // Posicionar los nodos de manera circular o según tu preferencia
+    const angle = (index * Math.PI * 2) / ciudades.length;
+    const radius = 150;
+    node.style.top = `${graphContainer.offsetHeight / 2 + radius * Math.sin(angle) - 20}px`;
+    node.style.left = `${graphContainer.offsetWidth / 2 + radius * Math.cos(angle) - 20}px`;
+    
+    graphContainer.appendChild(node);
+    return { id: ciudad.id, node };
+  });
+
+  // Dibujar las rutas (líneas entre nodos)
+  rutas.forEach(ruta => {
+    const origenNode = nodos.find(nodo => nodo.id === ruta.origen_id);
+    const destinoNode = nodos.find(nodo => nodo.id === ruta.destino_id);
+
+    if (origenNode && destinoNode) {
+      const edge = document.createElement('div');
+      edge.classList.add('edge');
+      
+      const origenX = parseInt(origenNode.node.style.left) + 20;
+      const origenY = parseInt(origenNode.node.style.top) + 20;
+      const destinoX = parseInt(destinoNode.node.style.left) + 20;
+      const destinoY = parseInt(destinoNode.node.style.top) + 20;
+
+      const distanceX = destinoX - origenX;
+      const distanceY = destinoY - origenY;
+      const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+      edge.style.width = `${distance}px`;
+      edge.style.transform = `rotate(${Math.atan2(distanceY, distanceX)}rad)`;
+      edge.style.left = `${origenX}px`;
+      edge.style.top = `${origenY}px`;
+
+      graphContainer.appendChild(edge);
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded', mostrarGrafico);

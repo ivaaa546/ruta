@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <title>Rutas</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Agregar vis.js para representar el grafo -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vis-network@9.0.4/dist/vis-network.min.js"></script>
+
 </head>
 <body>
 
@@ -41,8 +45,8 @@
 
       <label>Estado:</label>
       <select id="rutaEstado">
-        <option value="activa">Activa</option>
-        <option value="inactiva">Inactiva</option>
+        <option value="activa" id="estadoActivo">Activa</option>
+        <option value="inactiva" id="estadoInactivo">Inactiva</option>
       </select>
       <button onclick="agregarRuta()">Agregar Ruta</button>
     </div>
@@ -74,8 +78,8 @@
       <button onclick="actualizarRuta()">Actualizar Ruta</button>
       <button onclick="eliminarRuta()">Eliminar Ruta</button>
     </div>
+    <div id="grafo" style="width: 100%; height: 400px;"></div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>

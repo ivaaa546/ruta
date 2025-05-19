@@ -7,6 +7,7 @@ window.onload = async () => {
   
   mostrarCiudades();
   mostrarRutas();
+
   // Obtener ciudades desde el backend
   const res = await fetch('/api/ciudades');
   const ciudades = await res.json();
@@ -33,6 +34,8 @@ window.onload = async () => {
       document.getElementById(id).appendChild(opt);
     });
   });
+
+  
 };
 
 // Función para buscar rutas óptimas
@@ -41,6 +44,7 @@ async function buscarRutas() {
   const destino = document.getElementById('destino').value;
   const resultado = document.getElementById('resultado');
 
+  // Validación: origen y destino no deben ser iguales
   if (origen === destino) {
     resultado.innerHTML = '<p>El origen y destino deben ser diferentes.</p>';
     return;
@@ -49,14 +53,17 @@ async function buscarRutas() {
   resultado.innerHTML = 'Buscando rutas...';
 
   try {
+    // Realizar la solicitud para obtener las rutas óptimas
     const res = await fetch(`/api/rutas/optimas?origen=${origen}&destino=${destino}`);
     const data = await res.json();
 
+    // Manejar el error si lo hay
     if (data.error) {
       resultado.innerHTML = `<p>${data.error}</p>`;
       return;
     }
 
+    // Mostrar los resultados en formato HTML
     resultado.innerHTML = `
       <h3>Origen: ${data.origen}</h3>
       <h3>Destino: ${data.destino}</h3>
@@ -71,7 +78,11 @@ async function buscarRutas() {
   } catch (err) {
     resultado.innerHTML = `<p>Error al buscar rutas.</p>`;
   }
+
+    mostrarGrafo();
+  
 }
+
 
 // Función para agregar una nueva ciudad
 async function agregarCiudad() {
@@ -236,6 +247,7 @@ async function mostrarRutas() {
   // Si ya hay una ruta seleccionada, mostrar su información
   mostrarNombreRuta();
 }
+
 function mostrarNombreRuta() {
   const select = document.getElementById('rutasList');
   const rutaId = select.value;
@@ -310,4 +322,60 @@ async function eliminarRuta() {
   } else {
     alert(data.error || 'Error al eliminar la ruta');
   }
+}
+
+async function mostrarGrafo() {
+  // Obtener las ciudades y rutas
+  const ciudadesRes = await fetch('/api/ciudades');
+  const ciudades = await ciudadesRes.json();
+
+  const rutasRes = await fetch('/api/rutas');
+  const rutas = await rutasRes.json();
+
+  // Crear nodos (ciudades)
+  const nodes = ciudades.map(c => ({
+    id: c.id,
+    label: c.nombre
+  }));
+
+  // Crear aristas (rutas)
+  const edges = rutas.map(r => {
+  const origenCiudad = ciudades.find(c => c.nombre === r.origen);
+  const destinoCiudad = ciudades.find(c => c.nombre === r.destino);
+
+  return {
+    from: origenCiudad?.id,
+    to: destinoCiudad?.id,
+    label: `${r.distancia} km`,
+    color: r.estado === 'activa' ? 'green' : 'red',
+    arrows: 'to'
+  };
+});
+
+
+  // Crear el grafo
+  const container = document.getElementById('grafo');
+  const data = {
+    nodes: nodes,
+    edges: edges
+  };
+
+  const options = {
+    nodes: {
+      shape: 'dot',
+      size: 16,
+      font: { size: 14 },
+      color: { background: '#97C2FC' }
+    },
+    edges: {
+      color: { color: '#848484', highlight: '#ff0000' },
+      width: 2,
+      arrows: 'to', // Mostrar flecha en las aristas
+    },
+    physics: {
+      enabled: true // Para que las conexiones se ajusten dinámicamente
+    }
+  };
+
+  const network = new vis.Network(container, data, options);
 }
